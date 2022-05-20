@@ -1,13 +1,23 @@
 '''
 Original Author: Serge Kruk
 Original Version: https://github.com/sgkruk/Apress-AI/blob/master/cutting_stock.py
+Updated by: Emad Ehsan
 
+Works with integers only: IP (Integer Programming) problems working with integers only.
+
+If you have some values that have decimal part, you can multiply all of your inputs with
+some number that will make them integers (or close estimation).
+
+You cannot specify units: Whether your input is in Inches or Meters, you have to keep
+a record of that yourself and conversions if any.
 
 '''
 from ortools.linear_solver import pywraplp
 from math import ceil
 from random import randint
 import json
+
+import GUI
 from read_lengths import get_data
 import typer
 from typing import Optional
@@ -475,7 +485,7 @@ def drawGraph(consumed_big_rolls, child_rolls, parent_width):
 
     # print coords
     coords = []
-    colors = ['r', 'g', 'b', 'y', 'brown', 'violet', 'pink', 'gray', 'orange', 'b', 'y']
+    colors = ['r', 'g', 'b', 'y', 'brown', 'violet', 'pink', 'orange', 'b', 'y']
     colorDict = {}
     i = 0
     for quantity, width in child_rolls:
@@ -501,7 +511,7 @@ def drawGraph(consumed_big_rolls, child_rolls, parent_width):
             height = abs(y1 - y2)
             # print(f"Rect#{idx}: {width}x{height}")
             # Create a Rectangle patch
-            rect_shape = patches.Rectangle((x1, y1), width, height, facecolor=colorDict[small_roll],
+            rect_shape = patches.Rectangle((x1, y1), width, height, facecolor=colorDict[small_roll], edgecolor='black',
                                            label=f'{small_roll}')
             ax.add_patch(rect_shape)  # Add the patch to the Axes
             x1 = x2  # x1 for next small roll in same big roll will be x2 of current roll
@@ -510,7 +520,7 @@ def drawGraph(consumed_big_rolls, child_rolls, parent_width):
         # set the unused width at the end as black colored rectangle
         if unused_width > 0:
             width = unused_width
-            rect_shape = patches.Rectangle((x1, y1), width, height, facecolor='black', label='Unused')
+            rect_shape = patches.Rectangle((x1, y1), width, height, facecolor='grey', label='Unused')
             ax.add_patch(rect_shape)  # Add the patch to the Axes
 
         y1 += 10  # next big roll will be plotted on top of current, a roll height is 8, so 2 will be margin between rolls
