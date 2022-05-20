@@ -17,7 +17,7 @@ from math import ceil
 from random import randint
 import json
 
-import GUI
+
 from read_lengths import get_data
 import typer
 from typing import Optional

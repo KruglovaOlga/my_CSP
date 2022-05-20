@@ -2,6 +2,7 @@ import pathlib
 from typing import List
 import re
 from math import ceil
+
 def get_data(infile:str)->List[float]:
     """ Reads a file of numbers and returns a list of (count, number) pairs."""
     _p = pathlib.Path(infile)
