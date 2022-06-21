@@ -17,12 +17,13 @@ from math import ceil
 from random import randint
 import json
 
-
 from read_lengths import get_data
 import typer
 from typing import Optional
 
-
+ # a function that returns the Solver object
+ # The name of the solver is passed in as a string and if an integer is passed in,
+ # it will be used as the number of iterations.
 def newSolver(name, integer=False):
     return pywraplp.Solver(name, \
                            pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING \
@@ -34,7 +35,7 @@ def newSolver(name, integer=False):
 return a printable value
 '''
 
-
+#
 def SolVal(x):
     if type(x) is not list:
         return 0 if x is None \
@@ -44,7 +45,7 @@ def SolVal(x):
     elif type(x) is list:
         return [SolVal(e) for e in x]
 
-
+# function returns value of objective function
 def ObjVal(x):
     return x.Objective().Value()
 
@@ -165,7 +166,8 @@ def bounds(demands, parent_width=100):
     b = [sum of widths of individual small rolls of each order]
     T = local var. stores sum of widths of adjecent small-rolls. When the width reaches 100%, T is set to 0 again.
     k = [k0, k1], k0 = minimum big-rolls requierd, k1: number of big rolls that can be consumed / cut from
-    TT = local var. stores sum of widths of of all small-rolls. At the end, will be used to estimate lower bound of big-rolls
+    TT = local var. stores sum of widths of of all small-rolls.
+    At the end, will be used to estimate lower bound of big-rolls
     '''
     num_orders = len(demands)
     b = []
@@ -178,7 +180,8 @@ def bounds(demands, parent_width=100):
         quantity, width = demands[i][0], demands[i][1]
         # TODO Verify: why min of quantity, parent_width/width?
         # assumes widths to be entered as percentage
-        # int(round(parent_width/demands[i][1])) will always be >= 1, because widths of small rolls can't exceed parent_width (which is width of big roll)
+        # int(round(parent_width/demands[i][1])) will always be >= 1,
+        # because widths of small rolls can't exceed parent_width (which is width of big roll)
         # b.append( min(demands[i][0], int(round(parent_width / demands[i][1]))) )
         b.append(min(quantity, int(round(parent_width / width))))
 
@@ -186,7 +189,8 @@ def bounds(demands, parent_width=100):
         # it's fine. Cut it.
         if T + quantity * width <= parent_width:
             T, TT = T + quantity * width, TT + quantity * width
-        # else, the width exceeds, so we have to cut only as much as we can cut from parent_width width of the big roll
+        # else, the width exceeds, so we have to cut only as much as
+        # we can cut from parent_width width of the big roll
         else:
             while quantity:
                 if T + width <= parent_width:
@@ -221,7 +225,8 @@ def rolls(nb, x, w, demands):
     # is cut from any big roll, that big roll's index would contain a number > 0
     for j in range(len(x[0])):
         # w[j]: width of j-th big roll
-        # int(x[i][j]) * [demands[i][1]] width of all i-th order's small rolls that are to be cut from j-th big roll
+        # int(x[i][j]) * [demands[i][1]] width of all i-th order's small rolls that
+        # are to be cut from j-th big roll
         RR = [abs(w[j])] + [int(x[i][j]) * [demands[i][1]] for i in range(num_orders) \
                             if x[i][j] > 0]  # if i-th order has some cuts from j-th order, x[i][j] would be > 0
         consumed_big_rolls.append(RR)
@@ -365,7 +370,6 @@ def rolls_patterns(patterns, y, demands, parent_width=100):
 '''
 checks if all small roll widths (demands) smaller than parent roll's width
 '''
-
 
 def checkWidths(demands, parent_width):
     for quantity, width in demands:
@@ -522,8 +526,8 @@ def drawGraph(consumed_big_rolls, child_rolls, parent_width):
             width = unused_width
             rect_shape = patches.Rectangle((x1, y1), width, height, facecolor='grey', label='Unused')
             ax.add_patch(rect_shape)  # Add the patch to the Axes
-
-        y1 += 10  # next big roll will be plotted on top of current, a roll height is 8, so 2 will be margin between rolls
+        # next big roll will be plotted on top of current, a roll height is 8, so 2 will be margin between rolls
+        y1 += 10
 
     plt.show()
 
